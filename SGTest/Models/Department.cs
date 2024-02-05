@@ -21,4 +21,6 @@ public class Department
     public Employee Manager { get; set; }
 
     public string Phone { get; set; }
+
+    public List<Department> Children { get; set; } = new List<Department>();
 }

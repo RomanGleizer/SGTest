@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-public class DatabaseContext : DbContext
+public class DatabaseContext(DatabaseSettings databaseSettings) : DbContext
 {
     public DbSet<Department> Department { get; set; }
 
@@ -8,8 +8,10 @@ public class DatabaseContext : DbContext
 
     public DbSet<JobTitle> JobTitles { get; set; }
 
+    private readonly DatabaseSettings _databaseSettings = databaseSettings;
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(ConfigManager.ReadDbConfig("config.json").ConnectionString);
+        optionsBuilder.UseNpgsql(_databaseSettings.ConnectionString);
     }
 }

@@ -1,0 +1,8 @@
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.csproj.AssemblyReference.cache
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.Form1.resources
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.csproj.GenerateResource.cache
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.AssemblyInfoInputs.cache
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.AssemblyInfo.cs
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.csproj.CoreCompileInputs.cache
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.sourcelink.json

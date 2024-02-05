@@ -1,4 +1,4 @@
-﻿public class DbConfig
+﻿public class DatabaseSettings
 {
     public string ConnectionString { get; set; }
 }
