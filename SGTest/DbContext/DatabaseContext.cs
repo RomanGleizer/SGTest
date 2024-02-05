@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-public class DataContext : DbContext
+public class DatabaseContext : DbContext
 {
     public DbSet<Department> Department { get; set; }
 
