@@ -10,13 +10,12 @@ public class Department
     [Column(Order = 0)]
     public string Name { get; set; }
 
-    [Key]
     [Column(Order = 1)]
     public int ParentID { get; set; }
 
     public Department Parent { get; set; }
 
-    public int ManagerID { get; set; }
+    public int? ManagerID { get; set; }
 
     public Employee Manager { get; set; }
 
