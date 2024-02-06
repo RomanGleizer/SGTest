@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Text.RegularExpressions;
 
 public class DataImporter
 {
@@ -11,9 +12,9 @@ public class DataImporter
         {
             var lines = File.ReadAllLines(filePath).ToList();
             var skippedTitleData = lines.Where(line => !string.IsNullOrWhiteSpace(line))
-                                    .Select(ParseTabSeparatedLine)
-                                    .Skip(1)
-                                    .ToList();
+                                        .Select(ParseTabSeparatedLine)
+                                        .Skip(1)
+                                        .ToList();
 
             var databaseSettings = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -22,31 +23,37 @@ public class DataImporter
                 .GetSection("DatabaseSettings")
                 .Get<DatabaseSettings>();
 
-            if (databaseSettings is not null)
-                using (var context = new DatabaseContext(databaseSettings))
-                {
-                    switch (importType.ToLowerInvariant())
-                    {
-                        case "подразделение":
-                            await ImportDepartments(context, skippedTitleData);
-                            break;
-                        case "сотрудник":
-                            await ImportEmployees(context, skippedTitleData);
-                            break;
-                        case "должность":
-                            await ImportJobTitles(context, skippedTitleData);
-                            break;
-                        default:
-                            Console.Error.WriteLine($"Неизвестный тип импорта: {importType}");
-                            break;
-                    }
+            if (databaseSettings is null || string.IsNullOrWhiteSpace(databaseSettings.ConnectionString))
+            {
+                Console.Error.WriteLine("Ошибка: Некорректные настройки базы данных.");
+                return;
+            }
 
-                    await context.SaveChangesAsync();
+            using (var context = new DatabaseContext(databaseSettings))
+            {
+                switch (importType.ToLower())
+                {
+                    case "подразделение":
+                        await ImportDepartments(context, skippedTitleData);
+                        break;
+                    case "сотрудник":
+                        await ImportEmployees(context, skippedTitleData);
+                        break;
+                    case "должность":
+                        await ImportJobTitles(context, skippedTitleData);
+                        break;
+                    default:
+                        Console.Error.WriteLine($"Неизвестный тип импорта: {importType}");
+                        break;
                 }
+
+                await context.SaveChangesAsync();
+                context.ChangeTracker.Clear();
+            }
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
-            Console.Error.WriteLine($"Произошла ошибка: {ex}");
+            Console.Error.WriteLine($"Произошла ошибка: {ex.Message}");
         }
     }
 
@@ -57,20 +64,19 @@ public class DataImporter
         for (var i = 0; i < skippedTitleData.Count; i += BatchSize)
         {
             var batch = skippedTitleData.Skip(i).Take(BatchSize).ToList();
-
-            var existingEmployeeNames = batch.Select(row => row[1].ToLowerInvariant()).ToList();
+            var existingEmployeeNames = batch.Select(row => row[1].ToLower()).ToList();
             var existingEmployees = await context.Employees
-                .Where(e => existingEmployeeNames.Contains(e.FullName.ToLowerInvariant()))
+                .Where(e => existingEmployeeNames.Contains(e.FullName.ToLower()))
                 .ToListAsync();
 
-            var existingEmployeeCollection = existingEmployees.ToDictionary(e => e.FullName.ToLowerInvariant());
+            var existingEmployeeCollection = existingEmployees.ToDictionary(e => e.FullName.ToLower());
             var employeesToAdd = new List<Employee>();
 
             foreach (var row in batch)
             {
                 var fullName = row[1];
 
-                if (existingEmployeeCollection.TryGetValue(fullName.ToLowerInvariant(), out var existingEmployee))
+                if (existingEmployeeCollection.TryGetValue(fullName.ToLower(), out var existingEmployee))
                     UpdateEmployee(existingEmployee, row);
                 else
                 {
@@ -110,18 +116,14 @@ public class DataImporter
             var phone = row[3];
 
             var manager = await context.Employees
-                .FirstOrDefaultAsync(e => e.FullName.ToLowerInvariant() == managerName.ToLowerInvariant());
+                .FirstOrDefaultAsync(e => e.FullName.ToLower() == managerName.ToLower());
 
-            var parentDepartment = await context.Department
-                .FirstOrDefaultAsync(d => d.Name.ToLowerInvariant() == parentDepartmentName.ToLowerInvariant());
+            var parentDepartment = await context.Departments
+                .FirstOrDefaultAsync(d => d.Name.ToLower() == parentDepartmentName.ToLower());
 
-            if (parentDepartment is null)
-                continue;
-
-            var existingDepartment = await context.Department
-                .FirstOrDefaultAsync(d =>
-                    d.ParentID == parentDepartment.ID &&
-                    d.Name.ToLowerInvariant() == departmentName.ToLowerInvariant());
+            var allDepartments = await context.Departments.ToListAsync();
+            var existingDepartment = allDepartments
+                .FirstOrDefault(d => RemoveExtraSpaces(d.Name).ToLower() == RemoveExtraSpaces(departmentName).ToLower());
 
             if (existingDepartment is not null)
                 UpdateDepartment(existingDepartment, manager, phone);
@@ -130,7 +132,7 @@ public class DataImporter
                 var newDepartment = new Department
                 {
                     Name = departmentName,
-                    ParentID = parentDepartment.ID,
+                    ParentID = parentDepartment?.ID,
                     Parent = parentDepartment,
                     ManagerID = manager?.ID,
                     Manager = manager,
@@ -143,14 +145,14 @@ public class DataImporter
             }
         }
 
-        context.Department.AddRange(departmentsToAdd);
+        context.Departments.AddRange(departmentsToAdd);
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
     }
 
     private static async Task ImportChildDepartments(DatabaseContext context, Department parentDepartment, List<string[]> data)
     {
-        var childDepartments = data.Where(r => r[1].ToLowerInvariant() == parentDepartment.Name.ToLowerInvariant()).ToList();
+        var childDepartments = data.Where(r => r[1].ToLower() == parentDepartment.Name.ToLower()).ToList();
         var childDepartmentsToAdd = new List<Department>();
 
         foreach (var childRow in childDepartments)
@@ -160,14 +162,14 @@ public class DataImporter
             var childPhone = childRow[3];
 
             var manager = await context.Employees
-                .FirstOrDefaultAsync(e => e.FullName.ToLowerInvariant() == childManagerName.ToLowerInvariant());
+                .FirstOrDefaultAsync(e => e.FullName.ToLower() == childManagerName.ToLower());
 
             if (manager is not null)
             {
-                var existingChildDepartment = await context.Department
+                var existingChildDepartment = await context.Departments
                     .FirstOrDefaultAsync(d =>
                         d.ParentID == parentDepartment.ID &&
-                        d.Name.ToLowerInvariant() == childDepartmentName.ToLowerInvariant());
+                        d.Name.ToLower() == childDepartmentName.ToLower());
 
                 if (existingChildDepartment is not null)
                     UpdateDepartment(existingChildDepartment, manager, childPhone);
@@ -178,7 +180,7 @@ public class DataImporter
                         Name = childDepartmentName,
                         ParentID = parentDepartment.ID,
                         Parent = parentDepartment,
-                        ManagerID = manager.ID,
+                        ManagerID = manager?.ID,
                         Manager = manager,
                         Phone = childPhone,
                         Children = new List<Department>()
@@ -190,7 +192,7 @@ public class DataImporter
             }
         }
 
-        context.Department.AddRange(childDepartmentsToAdd);
+        context.Departments.AddRange(childDepartmentsToAdd);
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
     }
@@ -198,7 +200,7 @@ public class DataImporter
     private static async Task ImportJobTitles(DatabaseContext context, List<string[]> data)
     {
         var jobTitlesToAdd = data.Select(row => new JobTitle { Name = row[0] }).ToList();
-        context.JobTitles.AddRange(jobTitlesToAdd);
+        context.JobTitle.AddRange(jobTitlesToAdd);
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
     }
@@ -206,7 +208,7 @@ public class DataImporter
     private static string[] ParseTabSeparatedLine(string line)
     {
         return line.Split('\t')
-            .Select(field => field.Trim().ToLowerInvariant())
+            .Select(field => field.Trim().ToLower())
             .ToArray();
     }
 
@@ -226,8 +228,9 @@ public class DataImporter
 
     private static async Task<Department> GetOrCreateDepartment(DatabaseContext context, string departmentName)
     {
-        var existingDepartment = await context.Department
-            .FirstOrDefaultAsync(d => d.Name.ToLowerInvariant() == departmentName.ToLowerInvariant());
+        var allDepartments = await context.Departments.ToListAsync();
+        var existingDepartment = allDepartments
+            .FirstOrDefault(d => RemoveExtraSpaces(d.Name).ToLower() == RemoveExtraSpaces(departmentName).ToLower());
 
         if (existingDepartment is not null)
             return existingDepartment;
@@ -238,10 +241,15 @@ public class DataImporter
             Children = new List<Department>()
         };
 
-        context.Department.Add(newDepartment);
+        context.Departments.Add(newDepartment);
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
 
         return newDepartment;
+    }
+
+    private static string RemoveExtraSpaces(string input)
+    {
+        return Regex.Replace(input, @"\s+", " ").Trim();
     }
 }

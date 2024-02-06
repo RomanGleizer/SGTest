@@ -27,7 +27,6 @@ C:\Users\romy4\source\repos\Test\SGTest\SGTest\bin\Debug\net8.0-windows\Newtonso
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\bin\Debug\net8.0-windows\Npgsql.dll
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\bin\Debug\net8.0-windows\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.csproj.AssemblyReference.cache
-C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.Form1.resources
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.csproj.GenerateResource.cache
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.AssemblyInfoInputs.cache
@@ -40,3 +39,5 @@ C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\refint\S
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.pdb
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.genruntimeconfig.cache
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\ref\SGTest.dll
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.Forms.ImportDataForm.resources
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.MainForm.resources
