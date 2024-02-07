@@ -48,7 +48,7 @@ public class DataImporter
                 }
 
                 await context.SaveChangesAsync();
-                context.ChangeTracker.Clear();
+                await DisplayCurrentData(context);
             }
         }
         catch (Exception ex)
@@ -249,7 +249,48 @@ public class DataImporter
     }
 
     private static string RemoveExtraSpaces(string input)
+        => Regex.Replace(input, @"\s+", " ").Trim();
+
+    private static async Task DisplayCurrentData(DatabaseContext context)
     {
-        return Regex.Replace(input, @"\s+", " ").Trim();
+        Console.WriteLine("Текущая структура данных:");
+
+        var rootDepartments = await context.Departments
+            .Include(d => d.Manager)
+            .Where(d => d.ParentID == null)
+            .OrderBy(d => d.Name)
+            .ToListAsync();
+
+        foreach (var department in rootDepartments)
+        {
+            Console.WriteLine($"= {department.Name} ID={department.ID}");
+            await DisplayDepartmentHierarchy(context, department, 1);
+        }
+    }
+
+    private static async Task DisplayDepartmentHierarchy(DatabaseContext context, Department department, int level)
+    {
+        var managerOutputted = false;
+        if (department.Manager != null)
+        {
+            Console.WriteLine($"* Сотрудник ID={department.Manager.ID}");
+            managerOutputted = true;
+        }
+
+        var employees = await context.Employees.Where(e => e.DepartmentID == department.ID).ToListAsync();
+        foreach (var employee in employees)
+            if (!managerOutputted || employee.ID != department.ManagerID)
+                Console.WriteLine($"- Сотрудник ID={employee.ID}");
+
+        var childDepartments = await context.Departments
+            .Where(d => d.ParentID == department.ID)
+            .OrderBy(d => d.Name)
+            .ToListAsync();
+
+        foreach (var childDepartment in childDepartments)
+        {
+            Console.WriteLine($"{new string('=', level + 1)} {childDepartment.Name} ID={childDepartment.ID}");
+            await DisplayDepartmentHierarchy(context, childDepartment, level + 1);
+        }
     }
 }
