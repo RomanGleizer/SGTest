@@ -19,12 +19,13 @@
         {
             DataImportButton = new Button();
             button1 = new Button();
+            PrintDatabaseData = new Button();
             SuspendLayout();
             // 
             // DataImportButton
             // 
             DataImportButton.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            DataImportButton.Location = new Point(301, 152);
+            DataImportButton.Location = new Point(301, 128);
             DataImportButton.Name = "DataImportButton";
             DataImportButton.Size = new Size(210, 40);
             DataImportButton.TabIndex = 0;
@@ -42,11 +43,23 @@
             button1.Text = "Выход";
             button1.UseVisualStyleBackColor = true;
             // 
+            // PrintDatabaseData
+            // 
+            PrintDatabaseData.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            PrintDatabaseData.Location = new Point(301, 187);
+            PrintDatabaseData.Name = "PrintDatabaseData";
+            PrintDatabaseData.Size = new Size(210, 40);
+            PrintDatabaseData.TabIndex = 3;
+            PrintDatabaseData.Text = "Вывод данных";
+            PrintDatabaseData.UseVisualStyleBackColor = true;
+            PrintDatabaseData.Click += PrintDatabaseData_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(802, 453);
+            Controls.Add(PrintDatabaseData);
             Controls.Add(button1);
             Controls.Add(DataImportButton);
             Name = "MainForm";
@@ -59,5 +72,6 @@
 
         private Button DataImportButton;
         private Button button1;
+        private Button PrintDatabaseData;
     }
 }

@@ -1,22 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class DepartmentHierarchyPrinter
 {
-    public static async Task PrintDepartmentHierarchy(DatabaseContext context, int? departmentId = null, string prefix = "")
+    public static async Task PrintDepartmentHierarchy(DatabaseContext context, int? departmentId = null, int level = 0)
     {
         var departments = await GetDepartments(context, departmentId);
         foreach (var department in departments)
         {
-            Console.WriteLine($"{prefix}= Подразделение ID={department.ID}");
+            Console.WriteLine($"{new string('=', level)} Подразделение ID={department.ID}");
 
             if (department.ManagerID != null)
             {
                 var manager = await context.Employees.FindAsync(department.ManagerID);
-                Console.WriteLine($"{prefix}* Сотрудник ID={manager.ID} ({manager.JobTitle})");
+                Console.WriteLine($"{new string(' ', level)} * Сотрудник ID={manager.ID}");
             }
 
-            await PrintEmployees(context, department.ID, prefix);
-            await PrintDepartmentHierarchy(context, department.ID, prefix + " ");
+            await PrintEmployees(context, department.ID, level + 1);
+            await PrintDepartmentHierarchy(context, department.ID, level + 1);
         }
     }
 
@@ -28,13 +32,15 @@ public class DepartmentHierarchyPrinter
             .ToListAsync();
     }
 
-    private static async Task PrintEmployees(DatabaseContext context, int departmentId, string prefix)
+    private static async Task PrintEmployees(DatabaseContext context, int departmentId, int level)
     {
         var employees = await context.Employees
             .Where(e => e.DepartmentID == departmentId)
             .ToListAsync();
 
         foreach (var employee in employees)
-            Console.WriteLine($"{prefix}- Сотрудник ID={employee.ID} ({employee.JobTitle})");
+        {
+            Console.WriteLine($"{new string(' ', level)}- Сотрудник ID={employee.ID}");
+        }
     }
 }

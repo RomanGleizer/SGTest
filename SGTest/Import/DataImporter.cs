@@ -34,7 +34,6 @@ public class DataImporter
                     Console.Error.WriteLine($"Неизвестный тип импорта: {importType}");
 
                 await context.SaveChangesAsync();
-                await DepartmentHierarchyPrinter.PrintDepartmentHierarchy(context);
             }
         }
         catch (Exception ex)
