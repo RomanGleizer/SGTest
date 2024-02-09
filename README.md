@@ -11,6 +11,50 @@
 ### 3. Создание таблиц
 Создайте таблицы в вашей базе данных, используя предоставленный SQL код.
 
+```SQL
+CREATE TABLE "JobTitle" (
+    "ID" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100)
+);
+
+CREATE TABLE "Departments" (
+    "ID" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100),
+    "ParentID" INT,
+    "ManagerID" INT,
+    "Phone" VARCHAR(20)
+);
+
+CREATE TABLE "Employees" (
+    "ID" SERIAL PRIMARY KEY,
+    "DepartmentID" INT,
+    "FullName" VARCHAR(100),
+    "Login" VARCHAR(50),
+    "Password" VARCHAR(50),
+    "JobTitle" INT
+);
+
+ALTER TABLE "Departments"
+    ADD CONSTRAINT "fk_parent_department"
+    FOREIGN KEY ("ParentID")
+    REFERENCES "Departments"("ID");
+
+ALTER TABLE "Departments"
+    ADD CONSTRAINT "fk_manager_employee"
+    FOREIGN KEY ("ManagerID")
+    REFERENCES "Employees"("ID");
+
+ALTER TABLE "Employees"
+    ADD CONSTRAINT "fk_department_employee"
+    FOREIGN KEY ("DepartmentID")
+    REFERENCES "Departments"("ID");
+
+ALTER TABLE "Employees"
+    ADD CONSTRAINT "fk_jobtitle_employee"
+    FOREIGN KEY ("JobTitle")
+    REFERENCES "JobTitle"("ID");
+```
+
 ### 4. Запуск приложения
 Найдите файл .exe в папке с проектом и запустите его. Это откроет консоль и приложение.
 
