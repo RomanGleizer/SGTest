@@ -18,14 +18,13 @@
         private void InitializeComponent()
         {
             DataImportButton = new Button();
-            button1 = new Button();
             PrintDatabaseData = new Button();
             SuspendLayout();
             // 
             // DataImportButton
             // 
             DataImportButton.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            DataImportButton.Location = new Point(301, 128);
+            DataImportButton.Location = new Point(303, 174);
             DataImportButton.Name = "DataImportButton";
             DataImportButton.Size = new Size(210, 40);
             DataImportButton.TabIndex = 0;
@@ -33,20 +32,10 @@
             DataImportButton.UseVisualStyleBackColor = true;
             DataImportButton.Click += DataImportButton_Click;
             // 
-            // button1
-            // 
-            button1.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            button1.Location = new Point(301, 243);
-            button1.Name = "button1";
-            button1.Size = new Size(210, 40);
-            button1.TabIndex = 2;
-            button1.Text = "Выход";
-            button1.UseVisualStyleBackColor = true;
-            // 
             // PrintDatabaseData
             // 
             PrintDatabaseData.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            PrintDatabaseData.Location = new Point(301, 187);
+            PrintDatabaseData.Location = new Point(303, 233);
             PrintDatabaseData.Name = "PrintDatabaseData";
             PrintDatabaseData.Size = new Size(210, 40);
             PrintDatabaseData.TabIndex = 3;
@@ -60,7 +49,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(802, 453);
             Controls.Add(PrintDatabaseData);
-            Controls.Add(button1);
             Controls.Add(DataImportButton);
             Name = "MainForm";
             Text = "Главная";
@@ -71,7 +59,6 @@
         #endregion
 
         private Button DataImportButton;
-        private Button button1;
         private Button PrintDatabaseData;
     }
 }

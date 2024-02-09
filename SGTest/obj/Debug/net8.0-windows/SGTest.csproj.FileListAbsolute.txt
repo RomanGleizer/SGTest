@@ -41,3 +41,4 @@ C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\refint\S
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.pdb
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.genruntimeconfig.cache
 C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\ref\SGTest.dll
+C:\Users\romy4\source\repos\Test\SGTest\SGTest\obj\Debug\net8.0-windows\SGTest.Forms.OutputForm.resources

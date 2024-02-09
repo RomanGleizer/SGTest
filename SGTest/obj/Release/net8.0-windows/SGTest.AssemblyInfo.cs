@@ -12,9 +12,9 @@ using System;
 using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("SGTest")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c8929e262fb61583df22923cc8d2d4e981a8d940")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d8a405574dbbe939652fa3059e3ec8e154f1eb95")]
 [assembly: System.Reflection.AssemblyProductAttribute("SGTest")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SGTest")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

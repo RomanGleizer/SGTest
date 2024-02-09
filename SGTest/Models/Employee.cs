@@ -10,5 +10,5 @@
 
     public string? Password { get; set; }
 
-    public string? JobTitle { get; set; }
+    public int? JobTitle { get; set; }
 }

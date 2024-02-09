@@ -59,6 +59,8 @@ public class DepartmentImporter : IDataImporter
         context.Departments.AddRange(departmentsToAdd);
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
+
+        Console.WriteLine("Департаменты успешно импортированы.");
     }
 
     private static void UpdateDepartment(Department existingDepartment, Employee manager, string phone)
@@ -123,7 +125,6 @@ public class DepartmentImporter : IDataImporter
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
     }
-
 
     public static async Task<Department> GetOrCreateDepartment(DatabaseContext context, string departmentName)
     {

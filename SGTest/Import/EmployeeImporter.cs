@@ -30,14 +30,15 @@ public class EmployeeImporter : IDataImporter
                     var departmentName = row[0];
                     var login = row[2];
                     var password = row[3];
-                    var jobTitle = row[4];
+                    var jobTitleName = row[4];
+                    var jobTitleId = await JobTitleImporter.GetJobTitleIdByName(jobTitleName, context);
 
                     var employee = new Employee
                     {
                         FullName = fullName,
                         Login = login,
                         Password = password,
-                        JobTitle = jobTitle
+                        JobTitle = jobTitleId
                     };
 
                     var department = await DepartmentImporter.GetOrCreateDepartment(context, departmentName);
@@ -52,13 +53,17 @@ public class EmployeeImporter : IDataImporter
             await context.SaveChangesAsync();
             context.ChangeTracker.Clear();
         }
+
+        Console.WriteLine("Сотрудники успешно импортированы.");
     }
 
     private static async Task UpdateEmployee(Employee existingEmployee, DatabaseContext context, string[] row)
     {
         existingEmployee.Login = row[2];
         existingEmployee.Password = row[3];
-        existingEmployee.JobTitle = row[4];
+        var jobTitleName = row[4];
+        var jobTitleId = await JobTitleImporter.GetJobTitleIdByName(jobTitleName, context);
+        existingEmployee.JobTitle = jobTitleId;
 
         var departmentName = row[0];
         var department = await DepartmentImporter.GetOrCreateDepartment(context, departmentName);

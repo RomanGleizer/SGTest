@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 
 namespace SGTest.Forms;
 
@@ -41,7 +40,7 @@ public partial class ImportDataForm : Form
     {
     }
 
-    private string GetEnumDescription(Enum value)
+    public string GetEnumDescription(Enum value)
     {
         var field = value.GetType().GetField(value.ToString());
         var attribute = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
@@ -62,5 +61,10 @@ public partial class ImportDataForm : Form
         {
             Console.Error.WriteLine(ex.ToString());
         }
+    }
+
+    private void ImportTypeText_Click(object sender, EventArgs e)
+    {
+
     }
 }

@@ -7,9 +7,45 @@ public class DataImporter
         try
         {
             var lines = File.ReadAllLines(filePath).ToList();
-            var skippedTitleData = lines.Where(line => !string.IsNullOrWhiteSpace(line))
+
+            if (lines.Count == 0)
+            {
+                Console.Error.WriteLine("Ошибка: Файл имеет неверный формат.");
+                return;
+            }
+
+            var header = ParseTabSeparatedLine(lines[0]);
+            switch (importType.ToLower())
+            {
+                case "подразделение":
+                    if (header.Length != 4 || header[0] != "название" || header[1] != "родительское подразделение" || header[2] != "руководитель" || header[3] != "телефон")
+                    {
+                        MessageBox.Show("Ошибка: Файл с данными о подразделениях имеет неверный формат.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    break;
+                case "сотрудник":
+                    if (header.Length != 5 || header[0] != "подразделение" || header[1] != "фио" || header[2] != "логин" || header[3] != "пароль" || header[4] != "должность")
+                    {
+                        MessageBox.Show("Ошибка: Файл с данными о сотрудниках имеет неверный формат.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    break;
+                case "должность":
+                    if (header.Length != 1)
+                    {
+                        MessageBox.Show("Ошибка: Файл с данными о должностях имеет неверный формат.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    break;
+                default:
+                    MessageBox.Show($"Неизвестный тип импорта: {importType}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+            }
+
+            var skippedTitleData = lines.Skip(1)
+                                        .Where(line => !string.IsNullOrWhiteSpace(line))
                                         .Select(ParseTabSeparatedLine)
-                                        .Skip(1)
                                         .ToList();
 
             var databaseSettings = new ConfigurationBuilder()
@@ -27,7 +63,7 @@ public class DataImporter
 
             using (var context = new DatabaseContext(databaseSettings))
             {
-                var importer = GetImporter(importType);
+                var importer = GetDataType(importType);
                 if (importer is not null)
                     await importer.ImportData(skippedTitleData, context);
                 else
@@ -42,7 +78,7 @@ public class DataImporter
         }
     }
 
-    private static IDataImporter GetImporter(string importType)
+    public static IDataImporter GetDataType(string importType)
     {
         switch (importType.ToLower())
         {

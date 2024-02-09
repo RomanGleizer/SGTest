@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Configuration;
 using SGTest.Forms;
-using System.Threading.Tasks;
 
 namespace SGTest
 {
@@ -20,7 +19,7 @@ namespace SGTest
                 .GetSection("DatabaseSettings")
                 .Get<DatabaseSettings>();
 
-            if (databaseSettings is not null) 
+            if (databaseSettings is not null)
                 _context = new DatabaseContext(databaseSettings);
         }
 
@@ -35,10 +34,10 @@ namespace SGTest
             importDataForm.Show();
         }
 
-        private async void PrintDatabaseData_Click(object sender, EventArgs e)
+        private void PrintDatabaseData_Click(object sender, EventArgs e)
         {
-            Console.Clear();
-            await DepartmentHierarchyPrinter.PrintDepartmentHierarchy(_context);
+            var outputDataForm = new OutputForm(_context);
+            outputDataForm.Show();
         }
     }
 }
