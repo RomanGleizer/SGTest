@@ -44,6 +44,7 @@
             ImportTypeText.Size = new Size(180, 34);
             ImportTypeText.TabIndex = 3;
             ImportTypeText.Text = "Тип импорта";
+            ImportTypeText.Click += ImportTypeText_Click;
             // 
             // ImportTypeDropdown
             // 
